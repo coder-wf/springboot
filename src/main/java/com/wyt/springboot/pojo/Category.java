@@ -1,9 +1,12 @@
 package com.wyt.springboot.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "category_")
+@JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
 public class Category {
 
     @Id
@@ -28,5 +31,10 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Category [id=" + id + ", name=" + name + "]";
     }
 }

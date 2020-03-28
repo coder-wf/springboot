@@ -2,6 +2,8 @@ package com.wyt.springboot.web;
 
 import com.wyt.springboot.dao.CategoryDao;
 import com.wyt.springboot.pojo.Category;
+import com.wyt.springboot.service.CategoryService;
+import com.wyt.springboot.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +19,7 @@ import java.util.List;
 @Controller
 public class CategoryController {
 
-    @Autowired
+    /*@Autowired
     CategoryDao categoryDao;
 
     @RequestMapping("/categoryList")
@@ -57,5 +59,43 @@ public class CategoryController {
         Page<Category> page =categoryDao.findAll(pageable);
         m.addAttribute("page", page);
         return "listCategory";
+    }*/
+
+    @Autowired
+    CategoryService categoryService;
+
+    @RequestMapping("/listCategory")
+
+    public String listCategory(Model m,@RequestParam(value = "start", defaultValue = "0") int start,@RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
+        start = start<0?0:start;
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(start, size, sort);
+        Page4Navigator<Category> page =categoryService.list(pageable);
+        m.addAttribute("page", page);
+        return "listCategory";
     }
+
+    @RequestMapping("/addCategory")
+    public String addCategory(Category c) throws Exception {
+        categoryService.save(c);
+        return "redirect:listCategory";
+    }
+    @RequestMapping("/deleteCategory")
+    public String deleteCategory(Category c) throws Exception {
+        categoryService.delete(c.getId());
+        return "redirect:listCategory";
+    }
+    @RequestMapping("/updateCategory")
+    public String updateCategory(Category c) throws Exception {
+        categoryService.save(c);
+        return "redirect:listCategory";
+    }
+    @RequestMapping("/editCategory")
+    public String ediitCategory(int id,Model m) throws Exception {
+        Category c= categoryService.get(id);
+        m.addAttribute("c", c);
+        return "editCategory";
+    }
+
 }
+
