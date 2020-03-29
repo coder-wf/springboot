@@ -1,6 +1,9 @@
 package com.wyt.springboot.web;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wyt.springboot.dao.CategoryDao;
+import com.wyt.springboot.mapper.CategoryMapper;
 import com.wyt.springboot.pojo.Category;
 import com.wyt.springboot.service.CategoryService;
 import com.wyt.springboot.util.Page4Navigator;
@@ -61,7 +64,7 @@ public class CategoryController {
         return "listCategory";
     }*/
 
-    @Autowired
+    /*@Autowired
     CategoryService categoryService;
 
     @RequestMapping("/listCategory")
@@ -95,6 +98,40 @@ public class CategoryController {
         Category c= categoryService.get(id);
         m.addAttribute("c", c);
         return "editCategory";
+    }*/
+
+    @Autowired(required = false)
+    CategoryMapper categoryMapper;
+
+    @RequestMapping("/addCategory")
+    public String listCategory(Category c) throws Exception {
+        categoryMapper.save(c);
+        return "redirect:listCategory";
+    }
+    @RequestMapping("/deleteCategory")
+    public String deleteCategory(Category c) throws Exception {
+        categoryMapper.delete(c.getId());
+        return "redirect:listCategory";
+    }
+    @RequestMapping("/updateCategory")
+    public String updateCategory(Category c) throws Exception {
+        categoryMapper.update(c);
+        return "redirect:listCategory";
+    }
+    @RequestMapping("/editCategory")
+    public String listCategory(int id,Model m) throws Exception {
+        Category c= categoryMapper.get(id);
+        m.addAttribute("c", c);
+        return "editCategory";
+    }
+
+    @RequestMapping("/listCategory")
+    public String listCategory(Model m,@RequestParam(value = "start", defaultValue = "0") int start,@RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
+        PageHelper.startPage(start,size,"id desc");
+        List<Category> cs=categoryMapper.findAll();
+        PageInfo<Category> page = new PageInfo<>(cs);
+        m.addAttribute("page", page);
+        return "listCategory";
     }
 
 }
